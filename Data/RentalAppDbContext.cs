@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FribergCarRentalApp.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Eventing.Reader;
 
 namespace FribergCarRentalApp.Data

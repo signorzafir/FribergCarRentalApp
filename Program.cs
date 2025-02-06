@@ -1,3 +1,6 @@
+using FribergCarRentalApp.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace FribergCarRentalApp
 {
     public class Program
@@ -8,6 +11,9 @@ namespace FribergCarRentalApp
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<RentalAppDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString
+                ("DefaultConnection")));
 
             var app = builder.Build();
 

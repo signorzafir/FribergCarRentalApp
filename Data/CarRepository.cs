@@ -36,7 +36,7 @@ namespace FribergCarRentalApp.Data
 
         IEnumerable<Car> ICarRepository.GetAllCars()
         {
-            return rentalAppDbContext.Cars.OrderBy(c => c.Brand).ThenBy(c=>c.Model);
+            return rentalAppDbContext.Cars.OrderBy(c => c.Make).ThenBy(c=>c.Model);
         }
     }
 }

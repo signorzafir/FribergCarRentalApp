@@ -14,6 +14,7 @@ namespace FribergCarRentalApp
             builder.Services.AddDbContext<RentalAppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString
                 ("DefaultConnection")));
+            builder.Services.AddScoped<ICarRepository, CarRepository>();
 
             var app = builder.Build();
 

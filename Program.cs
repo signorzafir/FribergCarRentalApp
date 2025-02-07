@@ -16,6 +16,7 @@ namespace FribergCarRentalApp
                 ("DefaultConnection")));
             builder.Services.AddScoped<ICarRepository, CarRepository>();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
             var app = builder.Build();
 

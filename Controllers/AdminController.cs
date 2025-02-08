@@ -18,24 +18,25 @@ namespace FribergCarRentalApp.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //public IActionResult Login(string email, string password)
-        //{
-        //    var admin = rentalAppDbContext.Admins.FirstOrDefault(x => x.Email == email && x.Password == password);
-        //    if (admin == null)
-        //    {
-        //        ViewBag.Error = "Invalid email or password.";
-        //        return View("Index");
-        //    }
-            
-        //        TempData["Message"] = "Welcome to Admin Page!";
-        //        return RedirectToAction("Dashboard");
-            
+        [HttpPost]
+        public IActionResult Login(string email, string password)
+        {
+            var admin = rentalAppDbContext.Admins.FirstOrDefault(x => x.Email == email && x.Password == password);
+            if (admin == null)
+            {
+                ViewBag.Error = "Invalid email or password.";
+                return View("Index");
+            }
 
-        //}
+            TempData["Message"] = "Welcome to Admin Page!";
+            return RedirectToAction("Dashboard");
+
+
+        }
         public IActionResult Dashboard()
         {
             return View();
         }
+
     }
 }

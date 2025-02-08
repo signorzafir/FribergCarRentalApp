@@ -18,11 +18,7 @@ namespace FribergCarRentalApp.Controllers
         {
             _context = context;
         }
-        //public void PopulateDropdowns()
-        //{
-        //    ViewBag.Cars = new SelectList(_context.Cars, "Id", "Model");
-        //}
-
+        
         // GET: Cars
         public async Task<IActionResult> Index()
         {

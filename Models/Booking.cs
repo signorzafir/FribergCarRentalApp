@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace FribergCarRentalApp.Models
 {
@@ -9,7 +10,11 @@ namespace FribergCarRentalApp.Models
         [Required] public int CustomerId { get; set; }
         [Required] public DateTime StartDate { get; set; }
         [Required] public DateTime EndDate { get; set;}
+
+        [ValidateNever]
         public Car Car { get; set; }
+
+        [ValidateNever]
         public Customer Customer { get; set; }
     }
 }

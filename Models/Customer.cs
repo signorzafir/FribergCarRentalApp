@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace FribergCarRentalApp.Models
@@ -12,7 +13,7 @@ namespace FribergCarRentalApp.Models
         [Required] 
         [MinLength(6, ErrorMessage = "Password must be at least 6 characters")] 
         public string Password { get; set; }
-
+        [ValidateNever]
         public virtual ICollection<Booking> Bookings { get; set; }
 
     }

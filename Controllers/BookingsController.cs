@@ -49,7 +49,8 @@ namespace FribergCarRentalApp.Controllers
         // GET: Bookings/Create
         public IActionResult Create()
         {
-            ViewData["CarId"] = new SelectList(_context.Cars, "Id", "Make");
+            //ViewData["CarId"] = new SelectList(_context.Cars, "Id", "Make");
+            ViewData["CarId"] = new SelectList(_context.Cars.Select(c=> new {c.Id, FullName = c.Make + " - " + c.Model}), "Id", "FullName");
             ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email");
             return View();
         }

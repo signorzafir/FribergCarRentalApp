@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FribergCarRentalApp.Data;
 using FribergCarRentalApp.Models;
+using FribergCarRentalApp.ViewModels;
 
 namespace FribergCarRentalApp.Controllers
 {
@@ -158,6 +159,46 @@ namespace FribergCarRentalApp.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        //Get: /Customers/Login
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        //Post: /Customers/Login
+        [HttpPost]
+        public IActionResult Login(CustomerLoginViewModel customerLoginVM)
+        {
+            if (ModelState.IsValid)
+            {
+                var customer = _context.Customers
+                    .FirstOrDefault(c => c.Email == customerLoginVM.Email && c.Password == customerLoginVM.Password);
+                if (customer == null) {
+                    ViewData["Message"] = "Invalid user id or password.";
+                    return View(customerLoginVM);
+                }
+                TempData["CustomerId"] = customer.Id;
+                TempData["CustomerName"] = customer.Name;
+                return RedirectToAction("MyBookings", "Customers");
+                 
+            }
+            return View(customerLoginVM);
+        }
+
+        public IActionResult MyBookings()
+        {
+            var customerId = TempData["CustomerId"] as int?;
+            if (!customerId.HasValue)
+            {
+                return RedirectToAction("Login");
+            }
+            var bookings = _context.Bookings
+                           .Where(b => b.CustomerId == customerId.Value)
+                           .Include(b => b.Car)
+                           .ToList();
+            return View(bookings);
         }
 
         private bool CustomerExists(int id)

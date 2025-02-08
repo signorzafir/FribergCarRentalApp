@@ -1,5 +1,6 @@
 ﻿using FribergCarRentalApp.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentalApp.Controllers
 {
@@ -36,6 +37,16 @@ namespace FribergCarRentalApp.Controllers
         public IActionResult Dashboard()
         {
             return View();
+        }
+
+        public IActionResult ManageBookings()
+        {
+            var bookings = rentalAppDbContext.Bookings
+                .Include(b => b.Customer)
+                .Include(b => b.Car)
+                .ToList();
+
+            return View(bookings);
         }
 
     }

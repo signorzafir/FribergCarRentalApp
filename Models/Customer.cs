@@ -14,7 +14,7 @@ namespace FribergCarRentalApp.Models
         [MinLength(6, ErrorMessage = "Password must be at least 6 characters")] 
         public string Password { get; set; }
         [ValidateNever]
-        public virtual ICollection<Booking> Bookings { get; set; }
+        public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
     }
 }

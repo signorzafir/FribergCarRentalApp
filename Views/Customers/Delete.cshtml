@@ -30,6 +30,8 @@
             @Html.DisplayFor(model => model.Password)
         </dd>
     </dl>
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FribergCarRentalApp.Data;
 using FribergCarRentalApp.Models;
+using FribergCarRentalApp.ViewModels;
 
 namespace FribergCarRentalApp.Controllers
 {

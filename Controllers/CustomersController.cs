@@ -62,7 +62,7 @@ namespace FribergCarRentalApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            
+
             return View(customer);
         }
 
@@ -140,10 +140,20 @@ namespace FribergCarRentalApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = _context.Customers.Include(c => c.Bookings).FirstOrDefault(c => c.Id == id);
             if (customer != null)
             {
-                _context.Customers.Remove(customer);
+                if (customer.Bookings.Any())
+                {
+                    ModelState.AddModelError("", "Cannot delete a customer with bookings.");
+                    return View(customer);
+                }
+                else
+                {
+                    _context.Customers.Remove(customer);
+
+                }
+
             }
 
             await _context.SaveChangesAsync();

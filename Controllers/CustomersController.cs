@@ -204,11 +204,12 @@ namespace FribergCarRentalApp.Controllers
             //{
             //    return RedirectToAction("Login");
             //}
-            if (TempData["CustomerId"] == null)
+            int customerId = Convert.ToInt32(TempData.Peek("CustomerId"));
+            //var customerId = TempData.Peek("CustomerId");
+            if (customerId == null)
             {
                 return RedirectToAction("Login");
             }
-            int customerId = Convert.ToInt32(TempData["CustomerId"]);
             var customer = customerRepository.GetCustomerByIdOrName(customerId);
             if (customer == null)
             {
@@ -307,10 +308,22 @@ namespace FribergCarRentalApp.Controllers
             return View(booking);
         }
         public IActionResult UserHome() 
-        { 
+        {
+            var customerName = TempData.Peek("CustomerName");
+            if (customerName == null)
+            {
+                return RedirectToAction("Login");
+            }
             var Cars = carRepository.GetAllCars();
+            ViewBag.LoggedInCustomer = customerName;
             return View(Cars);
         }
+        
+
+       
+
+        
+        
         
     }
 }

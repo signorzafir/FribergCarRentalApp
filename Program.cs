@@ -18,8 +18,15 @@ namespace FribergCarRentalApp
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(1); // Set expiration time
+                options.Cookie.HttpOnly = true; // Secure the cookie
+                options.Cookie.IsEssential = true;
+            });
 
             var app = builder.Build();
+            app.UseSession();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

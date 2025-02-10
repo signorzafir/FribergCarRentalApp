@@ -211,19 +211,43 @@ namespace FribergCarRentalApp.Controllers
             {
                 return RedirectToAction("ErrorView");
             }
-            var bookings = customer.Bookings.ToList();
+
+            var bookings = bookingRepository.GetAllBookings()
+                                            .Where(b => b.CustomerId == customerId)
+                                            .Include(b => b.Car);
+                
+
             
             return View(bookings);
         }
-        //private IActionResult CancelBooking(int id)
-        //{
-        //    var booking = _context.Bookings.Where(b => b.Id == id);
-        //    if (booking == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    _context.boo
-        //}
+        
+        public IActionResult CancelBooking(int id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var booking = bookingRepository.GetBookingById(id);
+            if (booking == null)
+            {
+                return NotFound();
+            }
+            //ViewBag.CarName = booking.Car.FullName;
+            return View(booking);
+            
+        }
+        [HttpPost]
+        public IActionResult CancelBooking(Booking booking)
+        {
+            if (booking == null)
+            {
+                return NotFound();
+            }
+            //ViewBag.CarName = booking.Car.FullName;
+
+            bookingRepository.DeleteBooking(booking);
+            return RedirectToAction("MyBookings");
+        }
         
         public IActionResult RegisterAccount()
         {

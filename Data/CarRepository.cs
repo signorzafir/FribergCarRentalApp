@@ -34,7 +34,7 @@ namespace FribergCarRentalApp.Data
             rentalAppDbContext.SaveChanges();
         }
 
-        IEnumerable<Car> ICarRepository.GetAllCars()
+        IQueryable<Car> ICarRepository.GetAllCars()
         {
             return rentalAppDbContext.Cars.OrderBy(c => c.Make).ThenBy(c=>c.Model);
         }

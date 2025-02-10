@@ -4,7 +4,7 @@ namespace FribergCarRentalApp.Data
 {
     public interface ICarRepository
     {
-        IEnumerable<Car> GetAllCars();
+        IQueryable<Car> GetAllCars();
         Car? GetCarById(int id);
         void AddCar(Car car);
         void UpdateCar(Car car);

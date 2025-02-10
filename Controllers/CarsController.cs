@@ -12,29 +12,29 @@ namespace FribergCarRentalApp.Controllers
 {
     public class CarsController : Controller
     {
-        private readonly RentalAppDbContext _context;
+        private readonly ICarRepository carRepository;
 
-        public CarsController(RentalAppDbContext context)
+        public CarsController(ICarRepository carRepository)
         {
-            _context = context;
+            this.carRepository = carRepository;
         }
         
         // GET: Cars
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Cars.ToListAsync());
+            var cars = carRepository.GetAllCars();
+            return View(cars);
         }
 
         // GET: Cars/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var car = await _context.Cars
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var car = carRepository.GetCarById(id);
             if (car == null)
             {
                 return NotFound();
@@ -58,22 +58,21 @@ namespace FribergCarRentalApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(car);
-                await _context.SaveChangesAsync();
+                carRepository.AddCar(car);
                 return RedirectToAction(nameof(Index));
             }
             return View(car);
         }
 
         // GET: Cars/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var car = await _context.Cars.FindAsync(id);
+            var car = carRepository.GetCarById(id);
             if (car == null)
             {
                 return NotFound();
@@ -97,8 +96,7 @@ namespace FribergCarRentalApp.Controllers
             {
                 try
                 {
-                    _context.Update(car);
-                    await _context.SaveChangesAsync();
+                    carRepository.UpdateCar(car);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -117,15 +115,14 @@ namespace FribergCarRentalApp.Controllers
         }
 
         // GET: Cars/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var car = await _context.Cars
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var car = carRepository.GetCarById(id);
             if (car == null)
             {
                 return NotFound();
@@ -139,19 +136,18 @@ namespace FribergCarRentalApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var car = await _context.Cars.FindAsync(id);
+            var car = carRepository.GetCarById(id);
             if (car != null)
             {
-                _context.Cars.Remove(car);
+                carRepository.DeleteCar(car);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CarExists(int id)
         {
-            return _context.Cars.Any(e => e.Id == id);
+            return carRepository.GetAllCars().Any(e => e.Id == id);
         }
     }
 }

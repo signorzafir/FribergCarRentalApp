@@ -1,8 +1,66 @@
-﻿@{
+﻿@model IEnumerable<FribergCarRentalApp.Models.Car>
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Welcome to Friberg Car Rental</h1>
 </div>
+
+<div>
+    <h2>Available Cars</h2>
+</div>
+
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Make)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Model)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Year)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PricePerDay)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ImageUrls)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Make)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Model)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Year)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PricePerDay)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ImageUrls)
+                    </td>
+                    <td>
+                        <a asp-controller="Customers" asp-action="CreateBooking" asp-route-id="@item.Id">Make Reservation</a> |
+                        
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+

@@ -4,7 +4,7 @@ namespace FribergCarRentalApp.Data
 {
     public interface IBookingRepository
     {
-        IEnumerable<Booking> GetAllBookings();
+        IQueryable<Booking> GetAllBookings();
         Booking? GetBookingById(int id);
         void AddBooking(Booking booking);
         void UpdateBooking(Booking booking);

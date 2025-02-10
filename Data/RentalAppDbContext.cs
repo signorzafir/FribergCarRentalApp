@@ -1,5 +1,6 @@
 ﻿using FribergCarRentalApp.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.General;
 using System.Diagnostics.Eventing.Reader;
 
 namespace FribergCarRentalApp.Data

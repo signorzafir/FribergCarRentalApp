@@ -22,7 +22,7 @@ namespace FribergCarRentalApp.Data
             rentalAppDbContext.SaveChanges();
         }
 
-        public IEnumerable<Booking> GetAllBookings()
+        public IQueryable<Booking> GetAllBookings()
         {
             return rentalAppDbContext.Bookings.OrderBy(b => b.Customer.Name);
         }

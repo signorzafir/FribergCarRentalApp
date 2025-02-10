@@ -4,7 +4,7 @@ namespace FribergCarRentalApp.Data
 {
     public interface ICustomerRepository
     {
-        IEnumerable<Customer> GetAllCustomers();
+        IQueryable<Customer> GetAllCustomers();
         Customer? GetCustomerByIdOrName(int id);
         Customer? GetCustomerByIdOrName(string name);
         void AddCustomer(Customer customer);

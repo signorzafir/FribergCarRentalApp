@@ -13,29 +13,38 @@ namespace FribergCarRentalApp.Controllers
 {
     public class CustomersController : Controller
     {
-        private readonly RentalAppDbContext _context;
+        private readonly ICustomerRepository customerRepository;
 
-        public CustomersController(RentalAppDbContext context)
+        private readonly IBookingRepository bookingRepository;
+        private readonly ICarRepository carRepository;
+
+
+        public CustomersController(ICustomerRepository customerRepository, 
+                                   IBookingRepository bookingRepository, 
+                                   ICarRepository carRepository)
         {
-            _context = context;
+            this.customerRepository = customerRepository;
+            this.bookingRepository = bookingRepository;
+            this.carRepository = carRepository;
         }
 
         // GET: Customers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Customers.ToListAsync());
+            var customers = customerRepository.GetAllCustomers().Include(c => c.Bookings);
+            return View(customers);
         }
 
         // GET: Customers/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var customer = customerRepository.GetCustomerByIdOrName(id);
+
             if (customer == null)
             {
                 return NotFound();
@@ -59,8 +68,8 @@ namespace FribergCarRentalApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
+                customerRepository.AddCustomer(customer);
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -68,14 +77,14 @@ namespace FribergCarRentalApp.Controllers
         }
 
         // GET: Customers/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = customerRepository.GetCustomerByIdOrName(id);
             if (customer == null)
             {
                 return NotFound();
@@ -99,8 +108,7 @@ namespace FribergCarRentalApp.Controllers
             {
                 try
                 {
-                    _context.Update(customer);
-                    await _context.SaveChangesAsync();
+                    customerRepository.UpdateCustomer(customer);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -119,15 +127,14 @@ namespace FribergCarRentalApp.Controllers
         }
 
         // GET: Customers/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var customer = customerRepository.GetCustomerByIdOrName(id);
             if (customer == null)
             {
                 return NotFound();
@@ -141,7 +148,7 @@ namespace FribergCarRentalApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var customer = _context.Customers.Include(c => c.Bookings).FirstOrDefault(c => c.Id == id);
+            var customer = customerRepository.GetCustomerByIdOrName(id);
             if (customer != null)
             {
                 if (customer.Bookings.Any())
@@ -151,19 +158,19 @@ namespace FribergCarRentalApp.Controllers
                 }
                 else
                 {
-                    _context.Customers.Remove(customer);
+                    customerRepository.DeleteCustomer(customer);
 
                 }
 
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         //Get: /Customers/Login
         public IActionResult Login()
         {
+            
             return View();
         }
 
@@ -171,39 +178,114 @@ namespace FribergCarRentalApp.Controllers
         [HttpPost]
         public IActionResult Login(CustomerLoginViewModel customerLoginVM)
         {
+            
             if (ModelState.IsValid)
             {
-                var customer = _context.Customers
+                var customer = customerRepository.GetAllCustomers()
                     .FirstOrDefault(c => c.Email == customerLoginVM.Email && c.Password == customerLoginVM.Password);
-                if (customer == null) {
+                if (customer == null)
+                {
                     ViewData["Message"] = "Invalid user id or password.";
                     return View(customerLoginVM);
                 }
                 TempData["CustomerId"] = customer.Id;
                 TempData["CustomerName"] = customer.Name;
-                return RedirectToAction("MyBookings", "Customers");
-                 
+                return RedirectToAction("UserHome", "Customers");
+
             }
             return View(customerLoginVM);
         }
 
         public IActionResult MyBookings()
         {
+            //var custId = TempData["CustomerId"] as int?;
+            //int customerId = Convert.ToInt32(custId);
+            //if (customerId == 0)
+            //{
+            //    return RedirectToAction("Login");
+            //}
+            if (TempData["CustomerId"] == null)
+            {
+                return RedirectToAction("Login");
+            }
+            int customerId = Convert.ToInt32(TempData["CustomerId"]);
+            var customer = customerRepository.GetCustomerByIdOrName(customerId);
+            if (customer == null)
+            {
+                return RedirectToAction("ErrorView"); // Handle as needed
+            }
+            var bookings = customer.Bookings.ToList();
+            //var bookings = customerRepository.GetCustomerByIdOrName(customerId).Bookings.ToList();
+            //var bookings = customer.Bookings.ToList();
+            //_context.Bookings
+            //           .Where(b => b.CustomerId == customerId.Value)
+            //           .Include(b => b.Car)
+            //           .ToList();
+            return View(bookings);
+        }
+        //private IActionResult CancelBooking(int id)
+        //{
+        //    var booking = _context.Bookings.Where(b => b.Id == id);
+        //    if (booking == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    _context.boo
+        //}
+        public IActionResult Logout()
+        {
+            TempData.Remove("CustomerId");
+            TempData.Remove("CustomerName");
+
+            return RedirectToAction("Login");
+        }
+
+        private bool CustomerExists(int id)
+        {
+            return customerRepository.GetAllCustomers().Any(e => e.Id == id);
+        }
+
+        public IActionResult CreateBooking()
+        {
+            ViewBag.Cars = carRepository.GetAllCars().ToList();
+            ViewData["CarId"] = new SelectList(carRepository.GetAllCars().Select(c => new { c.Id, FullName = c.Make + " - " + c.Model }), "Id", "FullName");
+            ViewData["CustomerId"] = new SelectList(customerRepository.GetAllCustomers(), "Id", "Email");
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreateBooking(Booking booking)
+        {
             var customerId = TempData["CustomerId"] as int?;
             if (!customerId.HasValue)
             {
                 return RedirectToAction("Login");
             }
-            var bookings = _context.Bookings
-                           .Where(b => b.CustomerId == customerId.Value)
-                           .Include(b => b.Car)
-                           .ToList();
-            return View(bookings);
-        }
 
-        private bool CustomerExists(int id)
-        {
-            return _context.Customers.Any(e => e.Id == id);
+
+            booking.CustomerId = customerId.Value;
+
+            if (booking.StartDate >= booking.EndDate)
+            {
+                ModelState.AddModelError(string.Empty, "End date must be after start date.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                bookingRepository.AddBooking(booking);
+                TempData["Message"] = "Booking created successfully!";
+                return RedirectToAction("MyBookings");
+            }
+
+            ViewBag.Cars = carRepository.GetAllCars().ToList();
+            return View(booking);
         }
+        public IActionResult UserHome() 
+        { 
+            var Cars = carRepository.GetAllCars();
+            return View(Cars);
+        }
+        
     }
 }

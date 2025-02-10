@@ -1,4 +1,5 @@
 ﻿using FribergCarRentalApp.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace FribergCarRentalApp.Data
 {
@@ -22,14 +23,16 @@ namespace FribergCarRentalApp.Data
             rentalAppDbContext.SaveChanges();
         }
 
-        public IEnumerable<Customer> GetAllCustomers()
+        public IQueryable<Customer> GetAllCustomers()
         {
             return rentalAppDbContext.Customers.OrderBy(c => c.Name);
         }
 
         public Customer? GetCustomerByIdOrName(int id)
         {
-            return rentalAppDbContext.Customers.Find(id);
+            return rentalAppDbContext.Customers
+                .Include(c => c.Bookings)
+                .FirstOrDefault(c => c.Id == id);
         }
 
         public Customer? GetCustomerByIdOrName(string name)

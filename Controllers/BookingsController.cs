@@ -13,32 +13,39 @@ namespace FribergCarRentalApp.Controllers
 {
     public class BookingsController : Controller
     {
-        private readonly RentalAppDbContext _context;
+        private readonly IBookingRepository bookingRepository;
+        private readonly ICarRepository carRepository;
+        private readonly ICustomerRepository customerRepository;
 
-        public BookingsController(RentalAppDbContext context)
+        public BookingsController(IBookingRepository bookingRepository, 
+                                  ICarRepository carRepository,
+                                  ICustomerRepository customerRepository)
         {
-            _context = context;
+            this.bookingRepository = bookingRepository;
+            this.carRepository = carRepository;
+            this.customerRepository = customerRepository;
         }
 
         // GET: Bookings
         public async Task<IActionResult> Index()
         {
-            var rentalAppDbContext = _context.Bookings.Include(b => b.Car).Include(b => b.Customer);
-            return View(await rentalAppDbContext.ToListAsync());
+            var Bookings = bookingRepository.GetAllBookings().Include(b => b.Car).Include(b => b.Customer).ToList();
+            ViewData["CarId"] = new SelectList(carRepository.GetAllCars().Select(c => new { c.Id, FullName = c.Make + " - " + c.Model }), "Id", "FullName");
+            ViewData["CustomerId"] = new SelectList(customerRepository.GetAllCustomers(), "Id", "Email");
+            return View(Bookings);
+
         }
 
         // GET: Bookings/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var booking = await _context.Bookings
-                .Include(b => b.Car)
-                .Include(b => b.Customer)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var booking = bookingRepository.GetBookingById(id);
+               
             if (booking == null)
             {
                 return NotFound();
@@ -51,8 +58,8 @@ namespace FribergCarRentalApp.Controllers
         public IActionResult Create()
         {
             //ViewData["CarId"] = new SelectList(_context.Cars, "Id", "Make");
-            ViewData["CarId"] = new SelectList(_context.Cars.Select(c=> new {c.Id, FullName = c.Make + " - " + c.Model}), "Id", "FullName");
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email");
+            ViewData["CarId"] = new SelectList(carRepository.GetAllCars().Select(c=> new {c.Id, FullName = c.Make + " - " + c.Model}), "Id", "FullName");
+            ViewData["CustomerId"] = new SelectList(customerRepository.GetAllCustomers(), "Id", "Email");
             return View();
         }
 
@@ -65,30 +72,30 @@ namespace FribergCarRentalApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(booking);
-                await _context.SaveChangesAsync();
+                bookingRepository.AddBooking(booking);
+                
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CarId"] = new SelectList(_context.Cars, "Id", "Make", booking.CarId);
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email", booking.CustomerId);
+            ViewData["CarId"] = new SelectList(carRepository.GetAllCars(), "Id", "Make", booking.CarId);
+            ViewData["CustomerId"] = new SelectList(customerRepository.GetAllCustomers(), "Id", "Email", booking.CustomerId);
             return View(booking);
         }
 
         // GET: Bookings/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var booking = await _context.Bookings.FindAsync(id);
+            var booking = bookingRepository.GetBookingById(id);
             if (booking == null)
             {
                 return NotFound();
             }
-            ViewData["CarId"] = new SelectList(_context.Cars, "Id", "Make", booking.CarId);
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email", booking.CustomerId);
+            ViewData["CarId"] = new SelectList(carRepository.GetAllCars(), "Id", "Make", booking.CarId);
+            ViewData["CustomerId"] = new SelectList(customerRepository.GetAllCustomers(), "Id", "Email", booking.CustomerId);
             return View(booking);
         }
 
@@ -108,8 +115,8 @@ namespace FribergCarRentalApp.Controllers
             {
                 try
                 {
-                    _context.Update(booking);
-                    await _context.SaveChangesAsync();
+                    bookingRepository.UpdateBooking(booking);
+                   
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -124,23 +131,21 @@ namespace FribergCarRentalApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CarId"] = new SelectList(_context.Cars, "Id", "Make", booking.CarId);
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "Email", booking.CustomerId);
+            ViewData["CarId"] = new SelectList(carRepository.GetAllCars(), "Id", "Make", booking.CarId);
+            ViewData["CustomerId"] = new SelectList(customerRepository.GetAllCustomers(), "Id", "Email", booking.CustomerId);
             return View(booking);
         }
 
         // GET: Bookings/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var booking = await _context.Bookings
-                .Include(b => b.Car)
-                .Include(b => b.Customer)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var booking = bookingRepository.GetBookingById(id);
+                
             if (booking == null)
             {
                 return NotFound();
@@ -154,19 +159,19 @@ namespace FribergCarRentalApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var booking = await _context.Bookings.FindAsync(id);
+            var booking = bookingRepository.GetBookingById(id);
             if (booking != null)
             {
-                _context.Bookings.Remove(booking);
+               bookingRepository.DeleteBooking(booking);
             }
 
-            await _context.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
         }
 
         private bool BookingExists(int id)
         {
-            return _context.Bookings.Any(e => e.Id == id);
+            return bookingRepository.GetAllBookings().Any(e => e.Id == id);
         }
     }
 }

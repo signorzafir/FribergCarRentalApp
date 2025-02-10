@@ -232,6 +232,31 @@ namespace FribergCarRentalApp.Controllers
         //    }
         //    _context.boo
         //}
+        
+        public IActionResult RegisterAccount()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult RegisterAccount(Customer customer)
+        {
+            if (customer==null)
+            {
+                return NotFound();
+            }
+            if (ModelState.IsValid)
+            {
+                var DuplicateCustomer = customerRepository.GetAllCustomers().Where(c=>c.Email == customer.Email);
+                if (DuplicateCustomer != null)
+                {
+                    ModelState.AddModelError("Email", "This Email is already registered");
+                }
+                customerRepository.AddCustomer(customer);
+                TempData["RegistraionSuccessful"] = "Account registered Successfully!";
+                return RedirectToAction("Login");
+            }
+            return View(customer);
+        }
         public IActionResult Logout()
         {
             TempData.Remove("CustomerId");

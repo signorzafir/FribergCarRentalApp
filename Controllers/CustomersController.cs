@@ -287,31 +287,38 @@ namespace FribergCarRentalApp.Controllers
             return customerRepository.GetAllCustomers().Any(e => e.Id == id);
         }
 
-        public IActionResult CreateBooking()
+        //public IActionResult CreateBooking()
+        //{
+        //    //ViewBag.Cars = carRepository.GetAllCars().ToList();
+        //    //ViewData["CarId"] = new SelectList(carRepository.GetAllCars().Select(c => new { c.Id, FullName = c.Make + " - " + c.Model }), "Id", "FullName");
+        //    //ViewData["CustomerId"] = new SelectList(customerRepository.GetAllCustomers(), "Id", "Email");
+            
+
+        //    return View();
+        //}
+
+        //[HttpPost]
+        public IActionResult CreateBooking(int Id)
         {
-            ViewBag.Cars = carRepository.GetAllCars().ToList();
-            ViewData["CarId"] = new SelectList(carRepository.GetAllCars().Select(c => new { c.Id, FullName = c.Make + " - " + c.Model }), "Id", "FullName");
-            ViewData["CustomerId"] = new SelectList(customerRepository.GetAllCustomers(), "Id", "Email");
-
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult CreateBooking(Booking booking)
-        {
-            var customerId = TempData["CustomerId"] as int?;
-            if (!customerId.HasValue)
+            var carId = Id;
+            int customerId = 5;
+                //Convert.ToInt32(HttpContext.Session.GetInt32("CustomerId"));
+            //if (HttpContext.Session.GetInt32("CustomerId") == null)
+            //{
+            //    return RedirectToAction("Login");
+            //}
+            var booking = new Booking
             {
-                return RedirectToAction("Login");
-            }
+                CarId = carId,
+                CustomerId = customerId
+            };
 
+            //booking.CustomerId = customerId.Value;
 
-            booking.CustomerId = customerId.Value;
-
-            if (booking.StartDate >= booking.EndDate)
-            {
-                ModelState.AddModelError(string.Empty, "End date must be after start date.");
-            }
+            //if (booking.StartDate >= booking.EndDate)
+            //{
+            //    ModelState.AddModelError(string.Empty, "End date must be after start date.");
+            //}
 
             if (ModelState.IsValid)
             {
@@ -320,8 +327,8 @@ namespace FribergCarRentalApp.Controllers
                 return RedirectToAction("MyBookings");
             }
 
-            ViewBag.Cars = carRepository.GetAllCars().ToList();
-            return View(booking);
+            //ViewBag.Cars = carRepository.GetAllCars().ToList();
+            return RedirectToAction("MyBookings");
         }
         public IActionResult UserHome() 
         {

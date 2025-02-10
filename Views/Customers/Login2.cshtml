@@ -1,0 +1,19 @@
+﻿@model FribergCarRentalApp.ViewModels.CustomerLoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h1>Customer Login</h1>
+
+<form method="post">
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" name="Email" required />
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" name="Password" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
+<a asp-action="RegisterAccount">Register Account Now</a>

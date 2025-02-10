@@ -301,12 +301,12 @@ namespace FribergCarRentalApp.Controllers
         public IActionResult CreateBooking(int Id)
         {
             var carId = Id;
-            int customerId = 5;
-                //Convert.ToInt32(HttpContext.Session.GetInt32("CustomerId"));
-            //if (HttpContext.Session.GetInt32("CustomerId") == null)
-            //{
-            //    return RedirectToAction("Login");
-            //}
+            int customerId = 
+                Convert.ToInt32(HttpContext.Session.GetInt32("CustomerId"));
+            if (HttpContext.Session.GetInt32("CustomerId") == null)
+            {
+                return RedirectToAction("Login");
+            }
             var booking = new Booking
             {
                 CarId = carId,
@@ -341,12 +341,41 @@ namespace FribergCarRentalApp.Controllers
             ViewBag.LoggedInCustomer = customerName;
             return View(Cars);
         }
-        
+        //Get: /Customers/Login
+        public IActionResult Login2()
+        {
 
-       
+            return View();
+        }
 
-        
-        
-        
+        //Post: /Customers/Login
+        [HttpPost]
+        public IActionResult Login2(CustomerLoginViewModel customerLoginVM)
+        {
+
+            if (ModelState.IsValid)
+            {
+                var customer = customerRepository.GetAllCustomers()
+                    .FirstOrDefault(c => c.Email == customerLoginVM.Email && c.Password == customerLoginVM.Password);
+                if (customer == null)
+                {
+                    ViewData["Message"] = "Invalid user id or password.";
+                    return View(customerLoginVM);
+                }
+                HttpContext.Session.SetString("CustomerName", customer.Name);
+                HttpContext.Session.SetInt32("CustomerId", customer.Id);
+
+                return RedirectToAction("CreateBooking", "Customers");
+
+            }
+            return View(customerLoginVM);
+        }
+
+
+
+
+
+
+
     }
 }

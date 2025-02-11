@@ -46,7 +46,7 @@
                 @Html.DisplayFor(modelItem => item.PricePerDay)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ImageUrls)
+                <a href="@item.ImageUrls" target="_blank">Show Car Image</a>
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

@@ -29,7 +29,7 @@ namespace FribergCarRentalApp.Controllers
                 return View("Index");
             }
 
-            TempData["Message"] = "Welcome to Admin Page!";
+            
             return RedirectToAction("Dashboard");
 
 

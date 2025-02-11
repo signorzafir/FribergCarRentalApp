@@ -201,7 +201,13 @@ namespace FribergCarRentalApp.Controllers
 
         public IActionResult MyBookings()
         {
-         
+
+            if (TempData.Peek("Message") != null)
+            {
+                var message = TempData.Peek("Message");
+                ViewBag.message = message;
+
+            }
             var customerId = HttpContext.Session.GetInt32("CustomerId") ;
          
             if (customerId == null)

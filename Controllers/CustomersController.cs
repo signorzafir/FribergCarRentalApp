@@ -241,6 +241,11 @@ namespace FribergCarRentalApp.Controllers
             {
                 return NotFound();
             }
+            if (booking.EndDate < DateTime.Now)
+            {
+                ModelState.AddModelError("EndDate", "Can not Delete past bookings!");
+                return View(booking);
+            }
             //ViewBag.CarName = booking.Car.FullName;
             return View(booking);
             
@@ -253,7 +258,11 @@ namespace FribergCarRentalApp.Controllers
                 return NotFound();
             }
             //ViewBag.CarName = booking.Car.FullName;
-
+            if (booking.EndDate < DateTime.Now)
+            {
+                ModelState.AddModelError("EndDate", "Can not Delete past bookings!");
+                return View(booking);
+            }
             bookingRepository.DeleteBooking(booking);
             return RedirectToAction("MyBookings");
         }
@@ -327,9 +336,16 @@ namespace FribergCarRentalApp.Controllers
                 return RedirectToAction("Login");
             }
 
-            
+           if (booking.StartDate>= booking.EndDate || booking.StartDate<= DateTime.Now)
+           {
+                ModelState.AddModelError("StartDate", "Invalid date sequence!");
+                ModelState.AddModelError("EndDate", "Invalid date sequence!");
+
+                return View(booking);
+           }
             if (ModelState.IsValid)
             {
+
                 bookingRepository.AddBooking(booking);
                 TempData["Message"] = "Your Booking is Confirmed now!";
                 return RedirectToAction("MyBookings");

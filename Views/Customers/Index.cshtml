@@ -37,9 +37,9 @@
                 @Html.DisplayFor(modelItem => item.Bookings.Count)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a class="btn btn-primary btn-sm  col-2" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a class="btn btn-success btn-sm  col-2" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a class="btn  btn-danger btn-sm  col-2" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
 }

@@ -50,10 +50,10 @@
                         @Html.DisplayFor(modelItem => item.PricePerDay)
                     </td>
                     <td>
-                        <a href="@item.ImageUrls" target="_blank">Show Car Image</a>
+                        <a class="btn btn-outline-secondary btn-sm" href="@item.ImageUrls" target="_blank">Show Car Image</a>
                     </td>
                     <td>
-                        <a asp-controller="Customers" asp-action="CreateBooking" asp-route-carId="@item.Id">Make Reservation</a>
+                        <a class="btn btn-primary btn-sm  col-auto" asp-controller="Customers" asp-action="CreateBooking" asp-route-carId="@item.Id">Book Now</a>
                         
                     </td>
                 </tr>

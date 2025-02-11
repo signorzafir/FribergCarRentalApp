@@ -4,7 +4,7 @@
     ViewData["Title"] = "UserHome";
 }
 
-<h1>USerHome</h1>
+<h1>UserHome</h1>
 
 <p>Logged in as @ViewBag.LoggedInCustomer</p>
 
@@ -56,7 +56,7 @@
             <td>
                 
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-controller="Customers" asp-action="CreateBooking" asp-route-id="@item.Id">Book Now</a>
+                <a asp-controller="Customers" asp-action="CreateBooking" asp-route-carId="@item.Id">Book Now</a>
             </td>
         </tr>
 }

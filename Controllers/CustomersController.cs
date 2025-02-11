@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using FribergCarRentalApp.Data;
 using FribergCarRentalApp.Models;
 using FribergCarRentalApp.ViewModels;
+using Newtonsoft.Json;
 
 namespace FribergCarRentalApp.Controllers
 {
@@ -190,7 +191,8 @@ namespace FribergCarRentalApp.Controllers
                 }
                 HttpContext.Session.SetString("CustomerName", customer.Name);
                 HttpContext.Session.SetInt32("CustomerId", customer.Id);
-
+                string? ReturnUrl = TempData["ReturnUrl"] as string;
+                //return !string.IsNullOrEmpty(ReturnUrl) ? Redirect(ReturnUrl) : RedirectToAction("MyBookings", "Customers");
                 return RedirectToAction("UserHome", "Customers");
 
             }
@@ -287,39 +289,38 @@ namespace FribergCarRentalApp.Controllers
             return customerRepository.GetAllCustomers().Any(e => e.Id == id);
         }
 
-        //public IActionResult CreateBooking()
-        //{
-        //    //ViewBag.Cars = carRepository.GetAllCars().ToList();
-        //    //ViewData["CarId"] = new SelectList(carRepository.GetAllCars().Select(c => new { c.Id, FullName = c.Make + " - " + c.Model }), "Id", "FullName");
-        //    //ViewData["CustomerId"] = new SelectList(customerRepository.GetAllCustomers(), "Id", "Email");
-            
-
-        //    return View();
-        //}
-
-        //[HttpPost]
-        public IActionResult CreateBooking(int Id)
+        public IActionResult CreateBooking(int carId)
         {
-            var carId = Id;
-            int customerId = 5;
-                //Convert.ToInt32(HttpContext.Session.GetInt32("CustomerId"));
-            //if (HttpContext.Session.GetInt32("CustomerId") == null)
-            //{
-            //    return RedirectToAction("Login");
-            //}
-            var booking = new Booking
+            
+            var booking = new Booking 
             {
-                CarId = carId,
-                CustomerId = customerId
+                CarId = carId
             };
 
-            //booking.CustomerId = customerId.Value;
+            return View(booking);
+        }
 
-            //if (booking.StartDate >= booking.EndDate)
-            //{
-            //    ModelState.AddModelError(string.Empty, "End date must be after start date.");
-            //}
+        [HttpPost]
+        public IActionResult CreateBooking(Booking booking)
+        {
+                      
+            int customerId = 
+            Convert.ToInt32(HttpContext.Session.GetInt32("CustomerId"));
+            
+            booking.CustomerId = customerId;
+            
+            if (HttpContext.Session.GetInt32("CustomerId") == null)
+            {
+                TempData["Booking"] = JsonConvert.SerializeObject(booking);
+                //TempData["Car-id"] = carId;
+                //TempData["Customer-id"] = customerId;
+                //TempData["Start-date"] = startdate;
+                //TempData
+                TempData["ReturnUrl"] = "ContinueCreateBooking";
+                return RedirectToAction("Login");
+            }
 
+            
             if (ModelState.IsValid)
             {
                 bookingRepository.AddBooking(booking);
@@ -327,7 +328,11 @@ namespace FribergCarRentalApp.Controllers
                 return RedirectToAction("MyBookings");
             }
 
-            //ViewBag.Cars = carRepository.GetAllCars().ToList();
+            return RedirectToAction("MyBookings");
+        }
+        public ActionResult ContinueCreateBooking(int Id) 
+        {
+            
             return RedirectToAction("MyBookings");
         }
         public IActionResult UserHome() 

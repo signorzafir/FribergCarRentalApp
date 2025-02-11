@@ -6,13 +6,20 @@
 
 <h1>My Home Page</h1>
 
-<p>Wellcome @ViewBag.LoggedInCustomer</p>
+<div class="d-flex align-items-center">
+    <div class=""><i class="bi bi-person-circle fs-3 me-2"></i></div>
+    <div class="pt-md-3"><p>Wellcome @ViewBag.LoggedInCustomer</p></div>
+    
+</div>
+    
 
-<p><a asp-action="MyBookings">Go to MyBookings</a></p>
+<div class="pb-4">
+    <a class="btn btn-primary btn-sm  col-auto" asp-action="MyBookings">Go to MyBookings</a>
+    <a class="btn btn-outline-secondary btn-sm  col-auto" asp-action="Logout">Logout</a>
+</div>
 
-<p><a asp-action="Logout">Logout</a></p>
 
-
+<h2>Available Cars</h2>
 
 <table class="table table-striped">
     <thead>
@@ -51,12 +58,12 @@
                 @Html.DisplayFor(modelItem => item.PricePerDay)
             </td>
             <td>
-                    <a href="@item.ImageUrls" target="_blank">Show Car Image</a>
+                    <a class="btn btn-outline-secondary btn-sm" href="@item.ImageUrls" target="_blank">Show Car Image</a>
             </td>
             <td>
                 
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-controller="Customers" asp-action="CreateBooking" asp-route-carId="@item.Id">Book Now</a>
+                    <a class="btn btn-secondary btn-sm  col-3" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a class="btn btn-success btn-sm  col-3" asp-controller="Customers" asp-action="CreateBooking" asp-route-carId="@item.Id">Book Now</a>
             </td>
         </tr>
 }

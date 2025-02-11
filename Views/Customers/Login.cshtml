@@ -3,17 +3,29 @@
     ViewData["Title"] = "Login";
 }
 
-<h1>Customer Login</h1>
+<h1>Login</h1>
 
 <form method="post">
-    <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" class="form-control" id="email" name="Email" required />
+    <div class="row">
+        <div class="">
+            <label for="email">Email</label>
+        </div>
+        <div class="col-md-4">
+            <input type="email" class="form-control " id="email" name="Email" required />
+        </div>
     </div>
-    <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" name="Password" required />
+    <div class="row">
+        <div>
+            <label for="password">Password</label>
+        </div>
+        <div class="col-md-4">
+            <input type="password" class="form-control" id="password" name="Password" required />
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary">Login</button>
+    <div>
+        <button type="submit" class="btn btn-primary mt-3">Login</button>
+    </div>
 </form>
-<a asp-action="RegisterAccount">Register Account Now</a>
+<div class="mt-3">
+    <a class="" asp-action="RegisterAccount">Register Account Now</a>
+</div>

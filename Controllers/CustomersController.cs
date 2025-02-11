@@ -219,7 +219,8 @@ namespace FribergCarRentalApp.Controllers
                                             .Include(b => b.Car);
                 
 
-            
+            ViewBag.LoggedInCustomer = HttpContext.Session.GetString("CustomerName");
+
             return View(bookings);
         }
         

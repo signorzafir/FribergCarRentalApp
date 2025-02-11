@@ -20,8 +20,8 @@ namespace FribergCarRentalApp
             builder.Services.AddScoped<IAdminRepository, AdminRepository>();
             builder.Services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(1); // Set expiration time
-                options.Cookie.HttpOnly = true; // Secure the cookie
+                options.IdleTimeout = TimeSpan.FromMinutes(20); 
+                options.Cookie.HttpOnly = true; 
                 options.Cookie.IsEssential = true;
             });
 

@@ -4,15 +4,51 @@
     ViewData["Title"] = "MyBookings";
 }
 
-<h1>MyBookings</h1>
+<h1>My Bookings</h1>
 
-<p>Logged in as @ViewBag.LoggedInCustomer</p>
+<div class="d-flex align-items-center">
+    <div class=""><i class="bi bi-person-circle fs-3 me-2"></i></div>
+    <div class="pt-md-3"><p>Wellcome! @ViewBag.LoggedInCustomer</p></div>
+</div>
 
-<p><a asp-action="UserHome">Go to HomePage</a></p>
+ @if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    
 
-<p><a asp-action="Logout">Logout</a></p>
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Congratulations!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @ViewBag.Message
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+            myModal.show();
+        });
+    </script>
+    
+}
 
-<table class="table">
+
+<div class="mb-4 mt-2">
+    <a class="btn btn-primary btn-sm  col-auto" asp-action="UserHome">Go to HomePage</a>
+    <a class="btn btn-outline-secondary btn-sm  col-auto" asp-action="Logout">Logout</a>
+</div>
+
+
+<table class="table table-striped">
     <thead>
         <tr>
             <th>
@@ -52,9 +88,9 @@
                     @Html.DisplayFor(modelItem => item.Customer.Email)
                 </td>
             <td>
-                    <a asp-controller="Bookings" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-controller="Bookings" asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-controller="Customers" asp-action="CancelBooking" asp-route-id="@item.Id">Delete</a>
+                    @* <a class="btn  btn-primary btn-sm  col-3" asp-controller="Bookings" asp-action="Edit" asp-route-id="@item.Id">Edit</a> | *@
+                    @* <a class="btn btn-secondary btn-sm  col-3" asp-controller="Bookings" asp-action="Details" asp-route-id="@item.Id">Details</a> | *@
+                    <a class="btn btn-danger btn-sm  col-auto" asp-controller="Customers" asp-action="CancelBooking" asp-route-id="@item.Id">Cancel Booking</a> 
             </td>
         </tr>
             

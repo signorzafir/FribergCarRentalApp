@@ -204,8 +204,8 @@ namespace FribergCarRentalApp.Controllers
 
             if (TempData.Peek("Message") != null)
             {
-                var message = TempData.Peek("Message");
-                ViewBag.message = message;
+                
+                ViewBag.Message = TempData["Message"];
 
             }
             var customerId = HttpContext.Session.GetInt32("CustomerId") ;
@@ -331,7 +331,7 @@ namespace FribergCarRentalApp.Controllers
             if (ModelState.IsValid)
             {
                 bookingRepository.AddBooking(booking);
-                TempData["Message"] = "Booking created successfully!";
+                TempData["Message"] = "Your Booking is Confirmed now!";
                 return RedirectToAction("MyBookings");
             }
 

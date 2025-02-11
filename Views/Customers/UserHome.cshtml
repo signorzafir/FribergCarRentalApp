@@ -62,8 +62,8 @@
             </td>
             <td>
                 
-                    <a class="btn btn-secondary btn-sm  col-3" asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a class="btn btn-success btn-sm  col-3" asp-controller="Customers" asp-action="CreateBooking" asp-route-carId="@item.Id">Book Now</a>
+                   @*  <a class="btn btn-secondary btn-sm  col-3" asp-controller="Cars" asp-action="Details" asp-route-id="@item.Id">Details</a> | *@
+                    <a class="btn btn-primary btn-sm  col-auto" asp-controller="Customers" asp-action="CreateBooking" asp-route-carId="@item.Id">Book Now</a>
             </td>
         </tr>
 }

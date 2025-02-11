@@ -14,7 +14,7 @@ namespace FribergCarRentalApp.Models
         [Required] public string Model { get; set; }
         public int Year { get; set; }
         [Precision(18, 2)] public decimal PricePerDay { get; set; }
-        public List<string> ImageUrls { get; set; }
+        public string ImageUrls { get; set; }
         [NotMapped]
         public string FullName => $"{Make} {Model}";
 

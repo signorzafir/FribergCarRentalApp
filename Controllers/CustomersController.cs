@@ -184,7 +184,7 @@ namespace FribergCarRentalApp.Controllers
 
         //Post: /Customers/Login
         [HttpPost]
-        public IActionResult Login(CustomerLoginViewModel customerLoginVM, string returnUrl)
+        public IActionResult Login(CustomerLoginViewModel customerLoginVM, string returnUrl = null)
         {
 
             if (ModelState.IsValid)

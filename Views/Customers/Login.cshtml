@@ -5,7 +5,8 @@
 
 <h1>Login</h1>
 
-<form method="post">
+<form asp-action="Login" method="post">
+    <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
     <div class="row">
         <div class="">
             <label for="email">Email</label>

@@ -30,6 +30,7 @@ namespace FribergCarRentalApp.Controllers
             if (admin == null)
             {
                 ViewBag.Error = "Invalid email or password.";
+                ViewData["ReturnUrl"] = returnUrl;
                 return View("Index");
             }
 

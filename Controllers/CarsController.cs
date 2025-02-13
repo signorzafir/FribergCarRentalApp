@@ -22,6 +22,12 @@ namespace FribergCarRentalApp.Controllers
         // GET: Cars
         public async Task<IActionResult> Index()
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Index", "Cars") });
+            }
+
             var cars = carRepository.GetAllCars();
             return View(cars);
         }
@@ -29,6 +35,12 @@ namespace FribergCarRentalApp.Controllers
         // GET: Cars/Details/5
         public async Task<IActionResult> Details(int id)
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Details", "Cars") });
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -46,6 +58,12 @@ namespace FribergCarRentalApp.Controllers
         // GET: Cars/Create
         public IActionResult Create()
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Create", "Cars") });
+            }
+
             return View();
         }
 
@@ -67,6 +85,12 @@ namespace FribergCarRentalApp.Controllers
         // GET: Cars/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Edit", "Cars") });
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -117,6 +141,12 @@ namespace FribergCarRentalApp.Controllers
         // GET: Cars/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Delete", "Cars") });
+            }
+
             if (id == null)
             {
                 return NotFound();

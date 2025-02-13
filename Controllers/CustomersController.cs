@@ -32,6 +32,12 @@ namespace FribergCarRentalApp.Controllers
         // GET: Customers
         public async Task<IActionResult> Index()
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Index", "Customers") });
+            }
+
             var customers = customerRepository.GetAllCustomers().Include(c => c.Bookings);
             return View(customers);
         }
@@ -39,6 +45,12 @@ namespace FribergCarRentalApp.Controllers
         // GET: Customers/Details/5
         public async Task<IActionResult> Details(int id)
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Details", "Customers") });
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -87,6 +99,12 @@ namespace FribergCarRentalApp.Controllers
         // GET: Customers/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Edit", "Customers") });
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -137,6 +155,11 @@ namespace FribergCarRentalApp.Controllers
         // GET: Customers/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Delete", "Customers") });
+            }
             if (id == null)
             {
                 return NotFound();

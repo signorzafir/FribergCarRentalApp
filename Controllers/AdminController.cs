@@ -18,6 +18,12 @@ namespace FribergCarRentalApp.Controllers
         // Get: /admin/
         public IActionResult Index(string returnUrl)
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId != null)
+            {
+                return RedirectToAction("Dashboard");
+            }
+
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
@@ -68,15 +74,15 @@ namespace FribergCarRentalApp.Controllers
             return View();
         }
 
-        public IActionResult ManageBookings()
-        {
-            var bookings = rentalAppDbContext.Bookings
-                .Include(b => b.Customer)
-                .Include(b => b.Car)
-                .ToList();
+        //public IActionResult ManageBookings()
+        //{
+        //    var bookings = rentalAppDbContext.Bookings
+        //        .Include(b => b.Customer)
+        //        .Include(b => b.Car)
+        //        .ToList();
 
-            return View(bookings);
-        }
+        //    return View(bookings);
+        //}
 
     }
 }

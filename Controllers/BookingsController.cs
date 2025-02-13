@@ -29,6 +29,12 @@ namespace FribergCarRentalApp.Controllers
         // GET: Bookings
         public async Task<IActionResult> Index()
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Index", "Bookings") });
+            }
+
             var Bookings = bookingRepository.GetAllBookings().Include(b => b.Car).Include(b => b.Customer).ToList();
             ViewData["CarId"] = new SelectList(carRepository.GetAllCars().Select(c => new { c.Id, FullName = c.Make + " - " + c.Model }), "Id", "FullName");
             ViewData["CustomerId"] = new SelectList(customerRepository.GetAllCustomers(), "Id", "Email");
@@ -39,6 +45,12 @@ namespace FribergCarRentalApp.Controllers
         // GET: Bookings/Details/5
         public async Task<IActionResult> Details(int id)
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Details", "Bookings") });
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -57,6 +69,12 @@ namespace FribergCarRentalApp.Controllers
         // GET: Bookings/Create
         public IActionResult Create()
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Create", "Bookings") });
+            }
+
             //ViewData["CarId"] = new SelectList(_context.Cars, "Id", "Make");
             ViewData["CarId"] = new SelectList(carRepository.GetAllCars().Select(c=> new {c.Id, FullName = c.Make + " - " + c.Model}), "Id", "FullName");
             ViewData["CustomerId"] = new SelectList(customerRepository.GetAllCustomers(), "Id", "Email");
@@ -84,6 +102,12 @@ namespace FribergCarRentalApp.Controllers
         // GET: Bookings/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Edit", "Bookings") });
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -139,6 +163,12 @@ namespace FribergCarRentalApp.Controllers
         // GET: Bookings/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Index", "Bookings") });
+            }
+
             if (id == null)
             {
                 return NotFound();

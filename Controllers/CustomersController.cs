@@ -20,8 +20,8 @@ namespace FribergCarRentalApp.Controllers
         private readonly ICarRepository carRepository;
 
 
-        public CustomersController(ICustomerRepository customerRepository, 
-                                   IBookingRepository bookingRepository, 
+        public CustomersController(ICustomerRepository customerRepository,
+                                   IBookingRepository bookingRepository,
                                    ICarRepository carRepository)
         {
             this.customerRepository = customerRepository;
@@ -32,6 +32,12 @@ namespace FribergCarRentalApp.Controllers
         // GET: Customers
         public async Task<IActionResult> Index()
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Index", "Customers") });
+            }
+
             var customers = customerRepository.GetAllCustomers().Include(c => c.Bookings);
             return View(customers);
         }
@@ -39,6 +45,12 @@ namespace FribergCarRentalApp.Controllers
         // GET: Customers/Details/5
         public async Task<IActionResult> Details(int id)
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Details", "Customers") });
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -57,6 +69,11 @@ namespace FribergCarRentalApp.Controllers
         // GET: Customers/Create
         public IActionResult Create()
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Create", "Customers") });
+            }
             return View();
         }
 
@@ -67,6 +84,8 @@ namespace FribergCarRentalApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Email,Password")] Customer customer)
         {
+
+
             if (ModelState.IsValid)
             {
                 customerRepository.AddCustomer(customer);
@@ -80,6 +99,12 @@ namespace FribergCarRentalApp.Controllers
         // GET: Customers/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Edit", "Customers") });
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -130,6 +155,11 @@ namespace FribergCarRentalApp.Controllers
         // GET: Customers/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Delete", "Customers") });
+            }
             if (id == null)
             {
                 return NotFound();
@@ -169,17 +199,17 @@ namespace FribergCarRentalApp.Controllers
         }
 
         //Get: /Customers/Login
-        public IActionResult Login()
+        public IActionResult Login(string returnUrl)
         {
-            
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         //Post: /Customers/Login
         [HttpPost]
-        public IActionResult Login(CustomerLoginViewModel customerLoginVM)
+        public IActionResult Login(CustomerLoginViewModel customerLoginVM, string returnUrl = null)
         {
-            
+
             if (ModelState.IsValid)
             {
                 var customer = customerRepository.GetAllCustomers()
@@ -187,13 +217,21 @@ namespace FribergCarRentalApp.Controllers
                 if (customer == null)
                 {
                     ViewData["Message"] = "Invalid user id or password.";
+                    ViewData["ReturnUrl"] = returnUrl;
                     return View(customerLoginVM);
                 }
                 HttpContext.Session.SetString("CustomerName", customer.Name);
                 HttpContext.Session.SetInt32("CustomerId", customer.Id);
-                string? ReturnUrl = TempData["ReturnUrl"] as string;
+                //string? ReturnUrl = TempData["ReturnUrl"] as string;
                 //return !string.IsNullOrEmpty(ReturnUrl) ? Redirect(ReturnUrl) : RedirectToAction("MyBookings", "Customers");
-                return RedirectToAction("UserHome", "Customers");
+                if (returnUrl != null)
+                {
+                    return Redirect(returnUrl);
+                }
+                else
+                {
+                    return RedirectToAction("UserHome", "Customers");
+                }
 
             }
             return View(customerLoginVM);
@@ -204,12 +242,12 @@ namespace FribergCarRentalApp.Controllers
 
             if (TempData.Peek("Message") != null)
             {
-                
+
                 ViewBag.Message = TempData["Message"];
 
             }
-            var customerId = HttpContext.Session.GetInt32("CustomerId") ;
-         
+            var customerId = HttpContext.Session.GetInt32("CustomerId");
+
             if (customerId == null)
             {
                 return RedirectToAction("Login");
@@ -223,13 +261,13 @@ namespace FribergCarRentalApp.Controllers
             var bookings = bookingRepository.GetAllBookings()
                                             .Where(b => b.CustomerId == customerId)
                                             .Include(b => b.Car);
-                
+
 
             ViewBag.LoggedInCustomer = HttpContext.Session.GetString("CustomerName");
 
             return View(bookings);
         }
-        
+
         public IActionResult CancelBooking(int id)
         {
             if (id == null)
@@ -248,7 +286,7 @@ namespace FribergCarRentalApp.Controllers
             }
             //ViewBag.CarName = booking.Car.FullName;
             return View(booking);
-            
+
         }
         [HttpPost]
         public IActionResult CancelBooking(Booking booking)
@@ -266,7 +304,7 @@ namespace FribergCarRentalApp.Controllers
             bookingRepository.DeleteBooking(booking);
             return RedirectToAction("MyBookings");
         }
-        
+
         public IActionResult RegisterAccount()
         {
             return View();
@@ -274,13 +312,13 @@ namespace FribergCarRentalApp.Controllers
         [HttpPost]
         public IActionResult RegisterAccount(Customer customer)
         {
-            if (customer==null)
+            if (customer == null)
             {
                 return NotFound();
             }
             if (ModelState.IsValid)
             {
-                var DuplicateCustomer = customerRepository.GetAllCustomers().Where(c=>c.Email == customer.Email);
+                var DuplicateCustomer = customerRepository.GetAllCustomers().Where(c => c.Email == customer.Email);
                 if (DuplicateCustomer != null)
                 {
                     ModelState.AddModelError("Email", "This Email is already registered");
@@ -293,7 +331,7 @@ namespace FribergCarRentalApp.Controllers
         }
         public IActionResult Logout()
         {
-            
+
             HttpContext.Session.Remove("CustomerName");
             HttpContext.Session.Remove("CustomerId");
 
@@ -307,8 +345,17 @@ namespace FribergCarRentalApp.Controllers
 
         public IActionResult CreateBooking(int carId)
         {
-            
-            var booking = new Booking 
+            var customerId = HttpContext.Session.GetInt32("CustomerId");
+            if (customerId == null)
+            {
+                TempData["carIdAfterLogin"] = carId;
+                return RedirectToAction("Login","Customers", new { returnUrl = Url.Action("CreateBooking", "Customers") });
+            }
+            if (TempData.Peek("carIdAfterLogin") != null) 
+            {
+                carId = Convert.ToInt32( TempData["carIdAfterLogin"]);
+            }
+            var booking = new Booking
             {
                 CarId = carId
             };
@@ -319,12 +366,12 @@ namespace FribergCarRentalApp.Controllers
         [HttpPost]
         public IActionResult CreateBooking(Booking booking)
         {
-                      
-            int customerId = 
+
+            int customerId =
             Convert.ToInt32(HttpContext.Session.GetInt32("CustomerId"));
-            
+
             booking.CustomerId = customerId;
-            
+
             if (HttpContext.Session.GetInt32("CustomerId") == null)
             {
                 TempData["Booking"] = JsonConvert.SerializeObject(booking);
@@ -336,13 +383,13 @@ namespace FribergCarRentalApp.Controllers
                 return RedirectToAction("Login");
             }
 
-           if (booking.StartDate>= booking.EndDate || booking.StartDate<= DateTime.Now)
-           {
+            if (booking.StartDate >= booking.EndDate || booking.StartDate <= DateTime.Now)
+            {
                 ModelState.AddModelError("StartDate", "Invalid date sequence!");
                 ModelState.AddModelError("EndDate", "Invalid date sequence!");
 
                 return View(booking);
-           }
+            }
             if (ModelState.IsValid)
             {
 
@@ -353,12 +400,12 @@ namespace FribergCarRentalApp.Controllers
 
             return RedirectToAction("MyBookings");
         }
-        public ActionResult ContinueCreateBooking(int Id) 
+        public ActionResult ContinueCreateBooking(int Id)
         {
-            
+
             return RedirectToAction("MyBookings");
         }
-        public IActionResult UserHome() 
+        public IActionResult UserHome()
         {
             var customerName = HttpContext.Session.GetString("CustomerName");
             if (customerName == null)
@@ -369,12 +416,12 @@ namespace FribergCarRentalApp.Controllers
             ViewBag.LoggedInCustomer = customerName;
             return View(Cars);
         }
-        
 
-       
 
-        
-        
-        
+
+
+
+
+
     }
 }

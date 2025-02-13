@@ -1,6 +1,8 @@
 ﻿using FribergCarRentalApp.Data;
+using FribergCarRentalApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace FribergCarRentalApp.Controllers
 {
@@ -14,40 +16,73 @@ namespace FribergCarRentalApp.Controllers
         }
 
         // Get: /admin/
-        public IActionResult Index()
+        public IActionResult Index(string returnUrl)
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId != null)
+            {
+                return RedirectToAction("Dashboard");
+            }
+
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         [HttpPost]
-        public IActionResult Login(string email, string password)
+        public IActionResult Index(string email, string password, string returnUrl)
         {
+            var ReturnUrl = returnUrl;
             var admin = rentalAppDbContext.Admins.FirstOrDefault(x => x.Email == email && x.Password == password);
             if (admin == null)
             {
                 ViewBag.Error = "Invalid email or password.";
+                ViewData["ReturnUrl"] = returnUrl;
                 return View("Index");
             }
 
+            HttpContext.Session.SetString("AdminName", admin.Name);
+            HttpContext.Session.SetInt32("AdminId", admin.Id);
             
-            return RedirectToAction("Dashboard");
+
+            if (ReturnUrl != null)
+            {
+                return Redirect(ReturnUrl);
+            }
+            else
+            {
+
+                return RedirectToAction("Dashboard");
+            }
 
 
+        }
+        public IActionResult Logout()
+        {
+
+            HttpContext.Session.Remove("AdminName");
+            HttpContext.Session.Remove("AdminId");
+
+            return RedirectToAction("Index");
         }
         public IActionResult Dashboard()
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index");
+            }
             return View();
         }
 
-        public IActionResult ManageBookings()
-        {
-            var bookings = rentalAppDbContext.Bookings
-                .Include(b => b.Customer)
-                .Include(b => b.Car)
-                .ToList();
+        //public IActionResult ManageBookings()
+        //{
+        //    var bookings = rentalAppDbContext.Bookings
+        //        .Include(b => b.Customer)
+        //        .Include(b => b.Car)
+        //        .ToList();
 
-            return View(bookings);
-        }
+        //    return View(bookings);
+        //}
 
     }
 }

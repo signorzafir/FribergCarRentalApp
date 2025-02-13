@@ -19,6 +19,10 @@ namespace FribergCarRentalApp.Controllers
 
         public IActionResult Index()
         {
+            if (HttpContext.Session.GetInt32("CustomerId") != null)
+            {
+                return RedirectToAction("UserHome", "Customers");
+            }
             return View(carRepository.GetAllCars().ToList());
         }
 

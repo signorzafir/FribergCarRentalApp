@@ -4,19 +4,23 @@
     ViewData["Title"] = "UserHome";
 }
 
-<h1>My Home Page</h1>
+<div class="container">
+    <div class="d-flex justify-content-between">
+        <div>
 
-<div class="d-flex align-items-center">
-    <div class=""><i class="bi bi-person-circle fs-3 me-2"></i></div>
-    <div class="pt-md-3"><p>Wellcome @ViewBag.LoggedInCustomer</p></div>
-    
+            <h1>My Home Page</h1>
+            <div class="pt-3 pb-5">
+                <a class="btn btn-primary " asp-action="MyBookings">Go to MyBookings</a>
+            </div>
+        </div>
+        <div class="d-flex flex-column align-items-center text-center">
+            <i class="bi bi-person-circle fs-2"></i>
+            @ViewBag.LoggedInCustomer
+            <a class="btn btn-outline-secondary btn-sm mt-md-1" asp-action="Logout">Logout</a>
+        </div>
+    </div>
 </div>
-    
 
-<div class="pb-4">
-    <a class="btn btn-primary btn-sm  col-auto" asp-action="MyBookings">Go to MyBookings</a>
-    <a class="btn btn-outline-secondary btn-sm  col-auto" asp-action="Logout">Logout</a>
-</div>
 
 
 <h2>Available Cars</h2>
@@ -43,29 +47,30 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Make)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Model)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Year)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PricePerDay)
-            </td>
-            <td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Make)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Model)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Year)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PricePerDay)
+                </td>
+                <td>
                     <a class="btn btn-outline-secondary btn-sm" href="@item.ImageUrls" target="_blank">Show Car Image</a>
-            </td>
-            <td>
-                
-                   @*  <a class="btn btn-secondary btn-sm  col-3" asp-controller="Cars" asp-action="Details" asp-route-id="@item.Id">Details</a> | *@
+                </td>
+                <td>
+
+                    @*  <a class="btn btn-secondary btn-sm  col-3" asp-controller="Cars" asp-action="Details" asp-route-id="@item.Id">Details</a> | *@
                     <a class="btn btn-primary btn-sm  col-auto" asp-controller="Customers" asp-action="CreateBooking" asp-route-carId="@item.Id">Book Now</a>
-            </td>
-        </tr>
-}
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

@@ -57,6 +57,11 @@ namespace FribergCarRentalApp.Controllers
         // GET: Customers/Create
         public IActionResult Create()
         {
+            var adminId = HttpContext.Session.GetInt32("AdminId");
+            if (adminId == null)
+            {
+                return RedirectToAction("Index", "Admin", new { returnUrl = Url.Action("Create", "Customers")});
+            }
             return View();
         }
 
@@ -67,6 +72,8 @@ namespace FribergCarRentalApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Email,Password")] Customer customer)
         {
+            
+           
             if (ModelState.IsValid)
             {
                 customerRepository.AddCustomer(customer);
